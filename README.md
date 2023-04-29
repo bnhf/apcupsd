@@ -1,10 +1,18 @@
 # apcupsd-master-slave
-This is a simple Ubuntu base with <code>apcupsd</code> installed. It manages and monitors a USB Connected UPS Device, and has the ability to gracefully shut down the host computer in the event of a prolonged power outage.  This is done with no customization to the host whatsoever, there's no need for cron jobs on the host, or trigger files and scripts.  Everything is done within the container.
+This is a simple Ubuntu-based Docker container with <code>apcupsd</code> installed. It manages and monitors one or more connected UPS devices, and has the ability to gracefully shut down the host computer, and the UPS itself, in the event of a prolonged power outage.  This is done with no customization to the host whatsoever, there's no need for cron jobs on the host, or trigger files and scripts.  Everything is done within the container.  Postfix is also present to support Email and SMS notifications of power events, via Gmail's SMTP service.
+
+This project can be used standalone, although there are also sister containers available for apcupsd-cgi and a near-zero configuration TIG (telegraf-InfluxDB-Grafana) stack available to monitor your UPS units.  A full write-up can be found here https://technologydragonslayer.com/2023/01/31/ultimate-apc-ups-monitoring-with-apcupsd-admin-plus-and-docker/:
+
+apcupsd-cgi:
+![screenshot-raspberrypi10-2023 04 29-14_49_05](https://user-images.githubusercontent.com/41088895/235323855-837810a1-b6f2-40c2-a39a-eae360902178.png)
+
+TIG stack:
+![screencapture-apcupsd-2023-04-29-14_56_00](https://user-images.githubusercontent.com/41088895/235324008-e1a9cb27-252a-402f-98c2-83243f5b6b4a.png)
 
 ### Use Cases:
 Use this image if your UPS is connected to your docker host by USB Cable and you don't want to run <code>apcupsd</code> in the physical host OS.
 
-Equally, this container can be run on any other host (SLAVE) to monitor another instance of this container running on a host (MASTER) connected to the UPS for power status messages from the UPS, and take action to gracefully shut down the non-UPS connected host.
+Equally, this container can be run on any other host (SLAVE) to monitor another instance of this container running on a host (MASTER) connected to the UPS for power status messages from the UPS, and take action to gracefully shut down the non-UPS connected host. Shutdowns of systems running Linux, Windows and Proxmox are all possible.
 
 The purpose of this image is to containerise the APC UPS monitoring daemon so that it is separated from the OS, yet still has access to the UPS via USB Cable.  
 
@@ -43,6 +51,9 @@ services:
 #      - APCUPSD_HOSTS=${APCUPSD_HOSTS} # If this is the MASTER, then enter the APUPSD_HOSTS list here, including this system (space separated)
 #      - APCUPSD_NAMES=${APCUPSD_NAMES} # Match the order of this list one-to-one to APCUPSD_HOSTS list, including this system (space separated)
       - TZ=${TZ}
+      - SMTP_GMAIL=${SMTP_GMAIL} # Gmail account (with 2FA enabled) to use for SMTP
+      - GMAIL_APP_PASSWD=${GMAIL_APP_PASSWD} # App password for apcupsd from Gmail account being used for SMTP
+      - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL} # The Email account to receive on/off battery messages and other notifications (Any valid Email will work)
     healthcheck:
       test: ["CMD-SHELL", "apcaccess | grep -E 'ONLINE' >> /dev/null"] # Command to check health
       interval: 30s # Interval between health checks
@@ -74,6 +85,9 @@ SELFTEST=${SELFTEST}
 APCUPSD_HOSTS=${APCUPSD_HOSTS}
 APCUPSD_NAMES=${APCUPSD_NAMES}
 TZ=${TZ}
+SMTP_GMAIL=${SMTP_GMAIL}
+GMAIL_APP_PASSWD=${GMAIL_APP_PASSWD}
+NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL}
 ```
 
 #### Suggested docker-compose for STANDALONE use:
@@ -91,6 +105,9 @@ services:
     environment:
       - UPSNAME=${UPSNAME} # Sets a name for the UPS (1 to 8 chars), that will be used by System Tray notifications, apcupsd-cgi and Grafana dashboards
       - TZ=${TZ}
+      - SMTP_GMAIL=${SMTP_GMAIL} # Gmail account (with 2FA enabled) to use for SMTP
+      - GMAIL_APP_PASSWD=${GMAIL_APP_PASSWD} # App password for apcupsd from Gmail account being used for SMTP
+      - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL} # The Email account to receive on/off battery messages and other notifications (Any valid Email will work)
     healthcheck:
       test: ["CMD-SHELL", "apcaccess | grep -E 'ONLINE' >> /dev/null"] # Command to check health of UPS connection
       interval: 30s # Interval between health checks
@@ -125,6 +142,9 @@ services:
       - APCUPSD_HOSTS=${APCUPSD_HOSTS} # If this is the MASTER, then enter the APUPSD_HOSTS list here, including this system (space separated)
       - APCUPSD_NAMES=${APCUPSD_NAMES} # Match the order of this list one-to-one to APCUPSD_HOSTS list, including this system (space separated)
       - TZ=${TZ}
+      - SMTP_GMAIL=${SMTP_GMAIL} # Gmail account (with 2FA enabled) to use for SMTP
+      - GMAIL_APP_PASSWD=${GMAIL_APP_PASSWD} # App password for apcupsd from Gmail account being used for SMTP
+      - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL} # The Email account to receive on/off battery messages and other notifications (Any valid Email will work)
     healthcheck:
       test: ["CMD-SHELL", "apcaccess | grep -E 'ONLINE' >> /dev/null"] # Command to check health
       interval: 30s # Interval between health checks
