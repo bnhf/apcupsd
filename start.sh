@@ -54,4 +54,24 @@ for ((i=0;i<${#HOSTS[@]};i++))
     fi
   done
 
+# create sasl_passwd and hash it
+if [ ! -z $SMTP_GMAIL ]; then
+  echo "smtp.gmail.com $SMTP_GMAIL:$GMAIL_APP_PASSWD" > /etc/postfix/sasl_passwd
+  postmap hash:/etc/postfix/sasl_passwd
+fi
+
+# change notifications to external email address
+notifications=( changeme offbattery onbattery )
+
+for i in "${notifications[@]}"
+  do
+    if [ ! -z $NOTIFICATION_EMAIL ]; then
+      sed -i 's|$SYSADMIN|'"$NOTIFICATION_EMAIL"'|' /etc/apcupsd/$i
+    fi
+  done
+
+# start Postfix mail service
+echo "Starting Postfix SMTP Mail Server"
+service postfix start
+
 /sbin/apcupsd -b
