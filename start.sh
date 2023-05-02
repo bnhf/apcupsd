@@ -70,6 +70,31 @@ for i in "${notifications[@]}"
     fi
   done
 
+# systems to wake using WoLweb on startup (with delay in seconds)
+
+wolweb_wakeup=( $WOLWEB_HOSTNAMES )
+
+for i in "${wolweb_wakeup[@]}"
+  do
+    if [ ! -z $WOLWEB_HOSTNAMES ]; then
+      curl /$WOLWEB_PATH_BASE/$i
+    fi
+  done
+
+# systems to wake using UpSnap on startup (with delay in seconds)
+
+upsnap_wakeup=( $UPSNAP_IDS )
+
+for i in "${upsnap_wakeup[@]}"
+  do
+    if [ ! -z $UPSNAP_IDS ]; then
+      curl -H 'Accept: application/json' -H "Authorization: Bearer \
+      $(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' \
+      --data '{"identity":'"$UPSNAP_USERNAME"',"password":'"$UPSNAP_PASSWD"',"rememberMe":false}' \
+      http://$UPSNAP_PATH_BASE/api/admins/auth-with-password | jq -r '.token')" http://$UPSNAP_PATH_BASE/api/upsnap/wake/:$i
+    fi
+  done
+
 # start Postfix mail service
 echo "Starting Postfix SMTP Mail Server"
 service postfix start
