@@ -78,7 +78,7 @@ wolweb_wakeup=( $WOLWEB_HOSTNAMES )
 for i in "${wolweb_wakeup[@]}"
   do
     if [ ! -z $WOLWEB_HOSTNAMES ]; then
-      ( sleep $WOLWEB_DELAY ; curl http://$WOLWEB_PATH_BASE/$i ) &
+      ( sleep $WOLWEB_DELAY ; curl -s http://$WOLWEB_PATH_BASE/$i ) &
     fi
   done
 
