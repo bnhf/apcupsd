@@ -50,10 +50,14 @@ services:
 #      - SELFTEST=${SELFTEST} # Sets the daemon to ask the UPS to perform a self test every x hours (default=336)
 #      - APCUPSD_HOSTS=${APCUPSD_HOSTS} # If this is the MASTER, then enter the APUPSD_HOSTS list here, including this system (space separated)
 #      - APCUPSD_NAMES=${APCUPSD_NAMES} # Match the order of this list one-to-one to APCUPSD_HOSTS list, including this system (space separated)
+      - SHUTDOWN_SCRIPT=${SHUTDOWN_SCRIPT} # Changes the default /sbin/shutdown to something that will actually shutdown the host (/etc/apcupsd/doshutdown recommended
       - TZ=${TZ}
       - SMTP_GMAIL=${SMTP_GMAIL} # Gmail account (with 2FA enabled) to use for SMTP
       - GMAIL_APP_PASSWD=${GMAIL_APP_PASSWD} # App password for apcupsd from Gmail account being used for SMTP
       - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL} # The Email account to receive on/off battery messages and other notifications (Any valid Email will work)
+      - WOLWEB_HOSTNAMES=${WOLWEB_HOSTNAMES} # Space seperated list of hostnames names to send WoL Magic Packet to on startup
+      - WOLWEB_PATH_BASE=${WOLWEB_PATH_BASE} # Everything after http:// and before the /hostname required to wake a system with WoLweb e.g. raspberrypi6:8089/wolweb/wake
+      - WOLWEB_DELAY=${WOLWEB_DELAY} # Value to use for "sleep" delay before sending a WoL Magic Packet to WOLWEB_HOSTNAMES in seconds
     healthcheck:
       test: ["CMD-SHELL", "apcaccess | grep -E 'ONLINE' >> /dev/null"] # Command to check health
       interval: 30s # Interval between health checks
@@ -84,10 +88,14 @@ KILLDELAY=${KILLDELAY}
 SELFTEST=${SELFTEST} 
 APCUPSD_HOSTS=${APCUPSD_HOSTS}
 APCUPSD_NAMES=${APCUPSD_NAMES}
+SHUTDOWN_SCRIPT=${SHUTDOWN_SCRIPT}
 TZ=${TZ}
 SMTP_GMAIL=${SMTP_GMAIL}
 GMAIL_APP_PASSWD=${GMAIL_APP_PASSWD}
 NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL}
+WOLWEB_HOSTNAMES=${WOLWEB_HOSTNAMES}
+WOLWEB_PATH_BASE=${WOLWEB_PATH_BASE}
+WOLWEB_DELAY=${WOLWEB_DELAY}
 ```
 
 #### Suggested docker-compose for STANDALONE use:
