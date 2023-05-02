@@ -35,7 +35,7 @@ for i in ${settings[@]}
     fi
   done
 
-# if $APCUPSD_HOSTS exists thendelete existing hosts.conf, and recreate with specified values
+# if $APCUPSD_HOSTS exists then delete existing hosts.conf, and recreate with specified values
 if [ ! -z "$APCUPSD_HOSTS" ]; then
   rm /etc/apcupsd/hosts.conf \
   && touch /etc/apcupsd/hosts.conf
@@ -54,6 +54,11 @@ for ((i=0;i<${#HOSTS[@]};i++))
     fi
   done
 
+# change shutdown variable in apccontrol from /sbin/shutdown to the desired script
+if [ ! -z "$SHUTDOWN_SCRIPT" ]; then
+  sed -i 's|^SHUTDOWN=|SHUTDOWN='"$SHUTDOWN_SCRIPT"'|' /etc/apcupsd/apccontrol
+fi
+
 # create sasl_passwd and hash it
 if [ ! -z $SMTP_GMAIL ]; then
   echo "smtp.gmail.com $SMTP_GMAIL:$GMAIL_APP_PASSWD" > /etc/postfix/sasl_passwd
@@ -61,7 +66,6 @@ if [ ! -z $SMTP_GMAIL ]; then
 fi
 
 # change notifications to external email address
-
 notifications=( changeme offbattery onbattery )
 
 for i in "${notifications[@]}"
@@ -72,7 +76,6 @@ for i in "${notifications[@]}"
   done
 
 # systems to wake using WoLweb on startup (with delay in seconds)
-
 wolweb_wakeup=( $WOLWEB_HOSTNAMES )
 
 for i in "${wolweb_wakeup[@]}"
@@ -83,7 +86,6 @@ for i in "${wolweb_wakeup[@]}"
   done
 
 # systems to wake using UpSnap on startup (with delay in seconds)
-
 upsnap_wakeup=( $UPSNAP_IDS )
 
 for i in "${upsnap_wakeup[@]}"
