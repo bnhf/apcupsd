@@ -61,6 +61,7 @@ if [ ! -z $SMTP_GMAIL ]; then
 fi
 
 # change notifications to external email address
+
 notifications=( changeme offbattery onbattery )
 
 for i in "${notifications[@]}"
