@@ -56,7 +56,7 @@ for ((i=0;i<${#HOSTS[@]};i++))
 
 # change shutdown variable in apccontrol from /sbin/shutdown to the desired script
 if [ ! -z "$SHUTDOWN_SCRIPT" ]; then
-  sed -i 's|^SHUTDOWN=|SHUTDOWN='"$SHUTDOWN_SCRIPT"'|' /etc/apcupsd/apccontrol
+  sed -i 's|^SHUTDOWN=.*|SHUTDOWN='"$SHUTDOWN_SCRIPT"'|' /etc/apcupsd/apccontrol
 fi
 
 # create sasl_passwd and hash it
