@@ -1,13 +1,27 @@
-#reboot:
+#!/bin/sh
+
+#docker host reboot:
 #dbus-send --system --print-reply --dest=org.freedesktop.login1 /org/freedesktop/login1 "org.freedesktop.login1.Manager.Reboot" boolean:true
 
-#reboot consolekit environmet:
+#docker host reboot consolekit environmet:
 #dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart boolean:true
 
+HOSTNAME=`hostname`
+MSG="$HOSTNAME UPS $UPSNAME initiated Shutdown Sequence"
+#
+(
+   echo "$MSG"
+   echo " "
+   /sbin/apcaccess status
+) | $APCUPSD_MAIL -s "$MSG" $SYSADMIN
 
-
-#shutdown:
+#docker host shutdown:
 dbus-send --system --print-reply --dest=org.freedesktop.login1 /org/freedesktop/login1 "org.freedesktop.login1.Manager.PowerOff" boolean:true
 
-#shutdown consolekit environmet:
+#docker host shutdown consolekit environmet:
 #dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.PowerOff boolean:true
+
+#Proxmox shutdown via PVE API (requires PVE token creation, environment variables not yet set up):
+#'curl "https://<IP>:8006/api2/extjs/nodes/<NodeName>/status" -H "Authorization: PVEAPIToken=<UserName>!<TokenID>=<TokenSecret>" -H "Content-Type: application/x-www-form-urlencoded" --data "command=shutdown" --insecure'
+
+exit 99
