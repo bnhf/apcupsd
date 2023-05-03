@@ -76,7 +76,6 @@ services:
 #      - SELFTEST=${SELFTEST} # Sets the daemon to ask the UPS to perform a self test every x hours (default=336)
 #      - APCUPSD_HOSTS=${APCUPSD_HOSTS} # If this is the MASTER, then enter the APUPSD_HOSTS list here, including this system (space separated)
 #      - APCUPSD_NAMES=${APCUPSD_NAMES} # Match the order of this list one-to-one to APCUPSD_HOSTS list, including this system (space separated)
-      - SHUTDOWN_SCRIPT=${SHUTDOWN_SCRIPT} # Changes the default /sbin/shutdown to something that will actually shutdown the host (/etc/apcupsd/doshutdown recommended
       - TZ=${TZ}
       - SMTP_GMAIL=${SMTP_GMAIL} # Gmail account (with 2FA enabled) to use for SMTP
       - GMAIL_APP_PASSWD=${GMAIL_APP_PASSWD} # App password for apcupsd from Gmail account being used for SMTP
@@ -114,7 +113,6 @@ KILLDELAY=${KILLDELAY}
 SELFTEST=${SELFTEST} 
 APCUPSD_HOSTS=${APCUPSD_HOSTS}
 APCUPSD_NAMES=${APCUPSD_NAMES}
-SHUTDOWN_SCRIPT=${SHUTDOWN_SCRIPT}
 TZ=${TZ}
 SMTP_GMAIL=${SMTP_GMAIL}
 GMAIL_APP_PASSWD=${GMAIL_APP_PASSWD}
