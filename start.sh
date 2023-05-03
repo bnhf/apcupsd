@@ -97,4 +97,5 @@ for i in "${upsnap_wakeup[@]}"
 echo "Starting Postfix SMTP Mail Server"
 service postfix start
 
+# start apcupsd daemon
 /sbin/apcupsd -b
