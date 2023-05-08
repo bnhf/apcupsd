@@ -9,7 +9,7 @@ This project can be used standalone, although there are also sister containers a
 
 apcupsd-cgi:
 
-![screenshot-raspberrypi10-2023 04 29-14_49_05](https://user-images.githubusercontent.com/41088895/235323855-837810a1-b6f2-40c2-a39a-eae360902178.png)
+![screenshot-raspberrypi10-2023 05 07-11_42_01](https://user-images.githubusercontent.com/41088895/236874426-04a9d101-bf9d-4595-ad55-2bdfce434b4c.png)
 
 TIG stack:
 
