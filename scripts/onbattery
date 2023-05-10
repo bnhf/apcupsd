@@ -13,5 +13,5 @@ MSG="$HOSTNAME UPS $1 Power Failure!"
    echo "$MSG"
    echo " "
    /sbin/apcaccess status
-) | $APCUPSD_MAIL -s "$MSG" benicehavefun@gmail.com
+) | $APCUPSD_MAIL -s "$MSG" $SYSADMIN
 exit 0

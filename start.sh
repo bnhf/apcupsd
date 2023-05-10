@@ -10,9 +10,9 @@ files=( apcupsd.conf hosts.conf doshutdown apccontrol changeme commfailure commo
 
 for i in "${files[@]}"
   do
-    if [ ! -f /etc/apcupsd/$i ]; then
+    if [ ! -f /etc/apcupsd/$i -o $UPDATE_SCRIPTS=true ]; then
       cp /opt/apcupsd/$i /etc/apcupsd/$i \
-      && echo "No existing $i found"
+      && echo "No existing $i found or UPDATE_SCRIPTS set to true"
     else
       echo "Existing $i found, and will be used"
     fi
@@ -96,6 +96,16 @@ for i in "${upsnap_wakeup[@]}"
 # start Postfix mail service
 echo "Starting Postfix SMTP Mail Server"
 service postfix start
+
+# send notification email on startup after power failure based shutdown
+if [ -f /etc/apcupsd/powerfail -a $POWER_RESTORED_EMAIL=true ]; then
+  export APCUPSD_MAIL="mail"
+  ( sleep 10 ; /etc/apcupsd/offbattery $UPSNAME ) &
+fi
+
+# remove any existing powerfail flag
+echo "Removing /etc/apcupsd/powerfail, if it exists, from previous power failure event"
+/lib/apcupsd/prestart
 
 # start apcupsd daemon
 /sbin/apcupsd -b
