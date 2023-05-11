@@ -15,6 +15,8 @@ This project can be used standalone, although there are also sister containers a
 
 ![screencapture-apcupsd-2023-04-29-14_56_00](https://user-images.githubusercontent.com/41088895/235324008-e1a9cb27-252a-402f-98c2-83243f5b6b4a.png)
 
+## Wake-on-LAN:
+
 This customized and updated version of WoLweb, is used for sending the Wake-on-LAN Magic Packets. It has a web interface, which is used to input the hostnames and MAC addresses of Ethernet connected systems you'd like to wake upon power restoration.  It can also be used for general purposes to wake systems via the web interface, or bookmarkable URLs:
 
 ![screenshot-apcupsd-2023 05 01-15_16_43](https://user-images.githubusercontent.com/41088895/235796252-1891d96a-cc45-4b61-9789-028fb033a936.png)
@@ -48,6 +50,8 @@ Minimal configuration is currently required for this image to work, though you m
 
 Portainer is the recommended tool here, and makes maintaining and updating this container substantially easier -- particularly if you have multiple APC UPS units, and multiple other systems you wish to be shutdown when power is lost.
 
+## apcupsd-master-slave:
+
 Below is the minimum docker-compose configuration required, followed by optional items grouped by function:
 
 ```yml
@@ -67,6 +71,8 @@ services:
       - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # Required to support host shutdown from the container
       - /data/apcupsd:/etc/apcupsd # /etc/apcupsd can be bound to a directory or a docker volume
 ```
+
+## Optional items:
 
 Environment variables for connectivity other than USB, including for slaves that aren't directly connected to a UPS:
 
@@ -146,6 +152,8 @@ volumes: # Use this section for volume bindings only
     external: true # Use this directive if you created the docker volume in advance
 ```
 
+## All env vars:
+
 The full list of environment variables that can be pasted into the Portainer-Stacks "Advanced" environment variables section:
 
 ```console
@@ -172,6 +180,8 @@ WOLWEB_HOSTNAMES=${WOLWEB_HOSTNAMES}
 WOLWEB_PATH_BASE=${WOLWEB_PATH_BASE}
 WOLWEB_DELAY=${WOLWEB_DELAY}
 ```
+
+## Complete, annotated, apcupsd-master-slave stack:
 
 And, if you want the whole enchilada to copy-and-paste -- here it is.  Fully annotated docker-compose for STANDALONE, MASTER or SLAVE use (Portainer-Stacks recommended):
 
