@@ -7,11 +7,11 @@ When power is restored the UPS comes back on by itself, the master will power up
 
 This project can be used standalone, although there are also sister containers available for apcupsd-cgi and a near-zero configuration TIG (telegraf-InfluxDB-Grafana) stack available to monitor your UPS units.  A full write-up can be found here https://technologydragonslayer.com/2023/01/31/ultimate-apc-ups-monitoring-with-apcupsd-admin-plus-and-docker/:
 
-### apcupsd-cgi:
+## apcupsd-cgi:
 
 ![screenshot-raspberrypi10-2023 05 07-11_42_01](https://user-images.githubusercontent.com/41088895/236874426-04a9d101-bf9d-4595-ad55-2bdfce434b4c.png)
 
-### TIG stack:
+## TIG stack:
 
 ![screencapture-apcupsd-2023-04-29-14_56_00](https://user-images.githubusercontent.com/41088895/235324008-e1a9cb27-252a-402f-98c2-83243f5b6b4a.png)
 
