@@ -1,14 +1,34 @@
-#!/bin/sh
+#!/bin/bash
 
-#docker host reboot:
+# docker host reboot:
 #dbus-send --system --print-reply --dest=org.freedesktop.login1 /org/freedesktop/login1 "org.freedesktop.login1.Manager.Reboot" boolean:true
 
-#docker host reboot consolekit environmet:
+# docker host reboot consolekit environmet:
 #dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart boolean:true
 
-#Proxmox shutdown via PVE API (requires PVE token creation, environment variables not yet set up):
-#curl "https://<IP>:8006/api2/extjs/nodes/<NodeName>/status" -H "Authorization: PVEAPIToken=<UserName>!<TokenID>=<TokenSecret>" -H "Content-Type: application/x-www-form-urlencoded" --data "command=shutdown" --insecure
+# Proxmox shutdown of one or more hosts via PVE API:
 
+# populate three arrays with hostnames, node names and API tokens
+HOSTS=( $PVE_SHUTDOWN_HOSTS )
+NODES=( $PVE_SHUTDOWN_NODES )
+TOKENS=( $PVE_SHUTDOWN_TOKENS )
+
+# send Proxmox API shutdowns to one or more host, node and API token combos:
+for ((i=0;i<${#NODES[@]};i++))
+  do
+    # if is used when hosts, nodes and tokens contain an equal number of elements
+    if [ ! -z $i ] && [[ ${#NODES[@]} == ${#HOSTS[@]} ]] && [[ ${#NODES[@]} == ${#TOKENS[@]} ]]; then
+      curl "https://${HOSTS[$i]}:8006/api2/extjs/nodes/${NODES[$i]}/status" -H "Authorization: PVEAPIToken=${TOKENS[$i]}" -H "Content-Type: application/x-www-form-urlencoded" --data "command=shutdown" --insecure
+    # elif is used if there's a single value in hosts and tokens
+    elif [ ! -z $i ] && [[ ${#HOSTS[@]} == 1 ]] && [[ ${#TOKENS[@]} == 1 ]]; then
+      curl "https://$HOSTS:8006/api2/extjs/nodes/${NODES[$i]}/status" -H "Authorization: PVEAPIToken=$TOKENS" -H "Content-Type: application/x-www-form-urlencoded" --data "command=shutdown" --insecure
+    # else is used if hosts, nodes and tokens don't meet either of the above tests
+    else
+      echo "No Proxmox API shutdown(s) performed"
+    fi
+  done
+
+# send Email confirming shutdown
 HOSTNAME=`hostname`
 MSG="$HOSTNAME UPS $UPSNAME initiated Shutdown Sequence"
 #
@@ -18,10 +38,10 @@ MSG="$HOSTNAME UPS $UPSNAME initiated Shutdown Sequence"
    /sbin/apcaccess status
 ) | $APCUPSD_MAIL -s "$MSG" $SYSADMIN
 
-#docker host shutdown:
+# docker host shutdown:
 dbus-send --system --print-reply --dest=org.freedesktop.login1 /org/freedesktop/login1 "org.freedesktop.login1.Manager.PowerOff" boolean:true
 
-#docker host shutdown consolekit environment:
+# docker host shutdown consolekit environment:
 #dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.PowerOff boolean:true
 
 exit 99
