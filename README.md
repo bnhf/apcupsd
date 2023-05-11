@@ -72,7 +72,7 @@ services:
       - /data/apcupsd:/etc/apcupsd # /etc/apcupsd can be bound to a directory or a docker volume
 ```
 
-## Optional items:
+### Optional items:
 
 Environment variables for connectivity other than USB, including for slaves that aren't directly connected to a UPS:
 
@@ -152,7 +152,7 @@ volumes: # Use this section for volume bindings only
     external: true # Use this directive if you created the docker volume in advance
 ```
 
-## All env vars:
+### All env vars:
 
 The full list of environment variables that can be pasted into the Portainer-Stacks "Advanced" environment variables section:
 
@@ -181,7 +181,7 @@ WOLWEB_PATH_BASE=${WOLWEB_PATH_BASE}
 WOLWEB_DELAY=${WOLWEB_DELAY}
 ```
 
-## Complete, annotated, apcupsd-master-slave stack:
+### Complete, annotated, apcupsd-master-slave stack:
 
 And, if you want the whole enchilada to copy-and-paste -- here it is.  Fully annotated docker-compose for STANDALONE, MASTER or SLAVE use (Portainer-Stacks recommended):
 
