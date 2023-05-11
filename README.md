@@ -120,7 +120,7 @@ Options to recieve notifications via Gmail SMTP Email or SMS related to power fa
       - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL} # The Email account to receive on/off battery messages and other notifications (Any valid Email will work)
 ```
 
-Options related to waking sytems after being shutdown during a power failuer event:
+Options related to waking sytems after being shutdown during a power failure event:
 
 ```yml
       - WOLWEB_HOSTNAMES=${WOLWEB_HOSTNAMES} # Space seperated list of hostnames names to send WoL Magic Packet to on startup
@@ -146,7 +146,7 @@ volumes: # Use this section for volume bindings only
     external: true # Use this directive if you created the docker volume in advance
 ```
 
-The full list of environment variables that can be pasted into Portainer-Stacks "Advanced" environment variables section:
+The full list of environment variables that can be pasted into the Portainer-Stacks "Advanced" environment variables section:
 
 ```console
 UPSNAME=${UPSNAME}
