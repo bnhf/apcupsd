@@ -46,7 +46,7 @@ The purpose of this image is to containerise the APC UPS monitoring daemon so th
 
 Minimal configuration is currently required for this image to work, though you may be required to tweak the USB device that is passed through to your container by docker.
 
-Portainer is the recommended tool here, and makes maintaining and updating this conatiner substantially easier -- particularly if you have multiple APC UPS units, and multiple other systems you wish to be shutdown when power is lost.
+Portainer is the recommended tool here, and makes maintaining and updating this container substantially easier -- particularly if you have multiple APC UPS units, and multiple other systems you wish to be shutdown when power is lost.
 
 Below is the minimum docker-compose configuration required, followed by optional items grouped by function:
 
