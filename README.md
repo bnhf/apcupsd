@@ -124,7 +124,7 @@ services:
 #     external: true # Use this directive if you created the docker volume in advance
 ```
 
-### *All environment variabless:*
+### *All environment variables:*
 
 The full list of environment variables that can be pasted into the Portainer-Stacks "Advanced" environment variables section. Replace the ${} part with your values.
 Delete those that you're not going to use:
@@ -167,7 +167,7 @@ The docker image is Debian 11 (Bullseye) based, with nginx-light as web server, 
 
 Apcupsd-cgi is configured to search and connect to the apcupsd daemon on the host machine IP via the standard port 3551. Nginx is configured to connect with fcgiwrap (CGI server) and to serve multimon.cgi directly on port 80. The container exposes port 80, but can be remapped as required -- I use port 3552.
 
-### *Portainer Stacks (container-based) installation of apcupd-cgi:*
+### *Docker-Compose for apcupd-cgi (Portainer-Stacks recommended):*
 
 ```yml
 version: '3.7'
