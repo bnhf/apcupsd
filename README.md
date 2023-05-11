@@ -40,7 +40,7 @@ Use this image if your UPS is connected to your docker host by USB Cable and you
 
 Equally, this container can be run on any other host (SLAVE) to monitor another instance of this container running on a host (MASTER) connected to the UPS for power status messages from the UPS, and take action to gracefully shut down the non-UPS connected host. Shutdowns of systems running Linux, Windows and Proxmox are all possible.
 
-The purpose of this image is to containerise the APC UPS monitoring daemon so that it is separated from the OS, yet still has access to the UPS via USB Cable.  
+The purpose of this image is to containerize the APC UPS monitoring daemon so that it is separated from the OS, yet still has access to the UPS via USB Cable.  
 
 ### Configuration:
 
