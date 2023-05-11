@@ -1,11 +1,11 @@
-# apcupsd-master-slave
+# *apcupsd-master-slave*
 This is an Ubuntu-based Docker container with <code>apcupsd</code> installed. It manages/monitors one or more connected UPS devices and has the ability to gracefully shut down the host computer, and the UPS itself, in the event of a prolonged power outage.  This is done with no customization to the host whatsoever, there's no need for cron jobs on the host, or trigger files and scripts.  Everything is done within the container.
 
 Postfix is also present to support Email and SMS notifications of power events, via Gmail's SMTP service.  A custom version of WoLweb is also supported, which allows you to wake systems shutdown during the power outage, once power is restored.  A possible sequence of events then is that the power goes out, an Email or SMS will be sent to your desired address, one or more slave systems are shutdown, then the master (connected to the UPS) is shutdown, and finally the UPS is turned off.
 
 When power is restored the UPS comes back on by itself, the master will power up (most SBCs do this automatically, other systems need to be set for this to happen in the BIOS), and finally Magic Packets will be sent to one or more systems to wake them up.  None of this requires you to be present, and the UPS battery life can be extended by not running it down to zero in an extended outage.
 
-### Use Cases:
+### *Use Cases:*
 Use this image if your UPS is connected to your docker host by USB Cable and you don't want to run <code>apcupsd</code> in the physical host OS.
 
 Equally, this container can be run on any other host (SLAVE) to monitor another instance of this container running on a host (MASTER) connected to the UPS for power status messages from the UPS, and take action to gracefully shut down the non-UPS connected host. Shutdowns of systems running Linux, Windows and Proxmox are all possible.
@@ -18,7 +18,7 @@ Minimal configuration is currently required for this image to work, though you m
 
 Portainer is the recommended tool here, and makes maintaining and updating this container substantially easier -- particularly if you have multiple APC UPS units, and multiple other systems you wish to be shutdown when power is lost.
 
-## apcupsd-master-slave:
+## @apcupsd-master-slave:*
 
 ### Here's the minimum docker-compose configuration required, if you want to do some quick testing. The full stack below is recommended though:
 
@@ -40,7 +40,7 @@ services:
       - /data/apcupsd:/etc/apcupsd # /etc/apcupsd can be bound to a directory or a docker volume
 ```
 
-### Complete, annotated, apcupsd-master-slave stack (Portainer-Stacks recommended):
+### *Complete, annotated, apcupsd-master-slave stack (Portainer-Stacks recommended):*
 
 ```yml
 version: '3.7'
@@ -124,7 +124,7 @@ services:
 #     external: true # Use this directive if you created the docker volume in advance
 ```
 
-### All env vars:
+### *All environment variabless:*
 
 The full list of environment variables that can be pasted into the Portainer-Stacks "Advanced" environment variables section. Replace the ${} part with your values.
 Delete those that you're not going to use:
@@ -159,7 +159,7 @@ PVE_SHUTDOWN_TOKENS=${PVE_SHUTDOWN_TOKENS}
 
 This project can be used standalone, although there are also sister containers available for apcupsd-cgi and a near-zero configuration TIG (telegraf-InfluxDB-Grafana) stack available to monitor your UPS units.  A full write-up can be found here https://technologydragonslayer.com/2023/01/31/ultimate-apc-ups-monitoring-with-apcupsd-admin-plus-and-docker/:
 
-## apcupsd-cgi:
+## *apcupsd-cgi:*
 
 ![screenshot-raspberrypi10-2023 05 07-11_42_01](https://user-images.githubusercontent.com/41088895/236874426-04a9d101-bf9d-4595-ad55-2bdfce434b4c.png)
 
@@ -192,11 +192,11 @@ services:
     UPSNAMES (List of names you'd like used in the WebUI. Order must match UPSHOSTS. Space separated without quotes.)
     TZ (Timezone for apcupsd-cgi to use when displaying information about individual UPS units)
 
-## TIG stack:
+## *TIG stack:*
 
 ![screencapture-apcupsd-2023-04-29-14_56_00](https://user-images.githubusercontent.com/41088895/235324008-e1a9cb27-252a-402f-98c2-83243f5b6b4a.png)
 
-## Wake-on-LAN:
+## *Wake-on-LAN:*
 
 This customized and updated version of WoLweb, is used for sending the Wake-on-LAN Magic Packets. It has a web interface, which is used to input the hostnames and MAC addresses of Ethernet connected systems you'd like to wake upon power restoration.  It can also be used for general purposes to wake systems via the web interface, or bookmarkable URLs:
 
