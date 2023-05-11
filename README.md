@@ -5,38 +5,6 @@ Postfix is also present to support Email and SMS notifications of power events, 
 
 When power is restored the UPS comes back on by itself, the master will power up (most SBCs do this automatically, other systems need to be set for this to happen in the BIOS), and finally Magic Packets will be sent to one or more systems to wake them up.  None of this requires you to be present, and the UPS battery life can be extended by not running it down to zero in an extended outage.
 
-This project can be used standalone, although there are also sister containers available for apcupsd-cgi and a near-zero configuration TIG (telegraf-InfluxDB-Grafana) stack available to monitor your UPS units.  A full write-up can be found here https://technologydragonslayer.com/2023/01/31/ultimate-apc-ups-monitoring-with-apcupsd-admin-plus-and-docker/:
-
-## apcupsd-cgi:
-
-![screenshot-raspberrypi10-2023 05 07-11_42_01](https://user-images.githubusercontent.com/41088895/236874426-04a9d101-bf9d-4595-ad55-2bdfce434b4c.png)
-
-## TIG stack:
-
-![screencapture-apcupsd-2023-04-29-14_56_00](https://user-images.githubusercontent.com/41088895/235324008-e1a9cb27-252a-402f-98c2-83243f5b6b4a.png)
-
-## Wake-on-LAN:
-
-This customized and updated version of WoLweb, is used for sending the Wake-on-LAN Magic Packets. It has a web interface, which is used to input the hostnames and MAC addresses of Ethernet connected systems you'd like to wake upon power restoration.  It can also be used for general purposes to wake systems via the web interface, or bookmarkable URLs:
-
-![screenshot-apcupsd-2023 05 01-15_16_43](https://user-images.githubusercontent.com/41088895/235796252-1891d96a-cc45-4b61-9789-028fb033a936.png)
-
-```yml
-version: '3.7'
-services:  
-  wolweb:
-    image: bnhf/wolweb:latest
-    container_name: wolweb  
-    environment:
-      - WOLWEBPORT=${WOLWEBPORT} # The port you'd like WoLweb to use (8089 recommended)
-      - WOLWEBVDIR=${WOLWEBVDIR} # The virtual directory for WoLweb to use (/wolweb recommended)
-      - WOLWEBBCASTIP=${WOLWEBBCASTIP} # The broadcast IP for your subnet including the port (192.168.0.255:9 or 192.168.1.255:9 are typical)
-    volumes:
-      - /data/wolweb:/wolweb/data # Bind a directory to /wolweb/data for data persistence
-    network_mode: host # host is the only network mode that supports WoL Magic Packets
-    restart: unless-stopped
-```
-
 ### Use Cases:
 Use this image if your UPS is connected to your docker host by USB Cable and you don't want to run <code>apcupsd</code> in the physical host OS.
 
@@ -152,6 +120,14 @@ volumes: # Use this section for volume bindings only
     external: true # Use this directive if you created the docker volume in advance
 ```
 
+Environment variables related to shutting down one or more Proxmox nodes. All VMs and CTs must be shutdown first -- which can be done by setting them up as apcupsd slaves.
+
+```yml
+      - PVE_SHUTDOWN_HOSTS=${PVE_SHUTDOWN_HOSTS} # Ordered list of pve hostnames (or IPs) to be used for API shutdown. Used with matching lists of $PVE_SHUTDOWN_NODES and $PVE_SHUTDOWN_TOKENS
+      - PVE_SHUTDOWN_NODES=${PVE_SHUTDOWN_NODES} # Ordered list of pve nodes. Used with matching lists of $PVE_SHUTDOWN_HOSTS and $PVE_SHUTDOWN_TOKENS
+      - PVE_SHUTDOWN_TOKENS=${PVE_SHUTDOWN_TOKENS} # Ordered list of pve API tokens with secrets in the form <username>@<node>!<api_token>=<api_secret
+```
+
 ### All env vars:
 
 The full list of environment variables that can be pasted into the Portainer-Stacks "Advanced" environment variables section:
@@ -179,6 +155,9 @@ POWER_RESTORED_EMAIL=${POWER_RESTORED_EMAIL}
 WOLWEB_HOSTNAMES=${WOLWEB_HOSTNAMES}
 WOLWEB_PATH_BASE=${WOLWEB_PATH_BASE}
 WOLWEB_DELAY=${WOLWEB_DELAY}
+PVE_SHUTDOWN_HOSTS=${PVE_SHUTDOWN_HOSTS}
+PVE_SHUTDOWN_NODES=${PVE_SHUTDOWN_NODES}
+PVE_SHUTDOWN_TOKENS=${PVE_SHUTDOWN_TOKENS}
 ```
 
 ### Complete, annotated, apcupsd-master-slave stack:
@@ -219,6 +198,9 @@ services:
       - WOLWEB_HOSTNAMES=${WOLWEB_HOSTNAMES} # Space seperated list of hostnames names to send WoL Magic Packet to on startup
       - WOLWEB_PATH_BASE=${WOLWEB_PATH_BASE} # Everything after http:// and before the /hostname required to wake a system with WoLweb e.g. raspberrypi6:8089/wolweb/wake
       - WOLWEB_DELAY=${WOLWEB_DELAY} # Value to use for "sleep" delay before sending a WoL Magic Packet to WOLWEB_HOSTNAMES in seconds
+      - PVE_SHUTDOWN_HOSTS=${PVE_SHUTDOWN_HOSTS} # Ordered list of pve hostnames (or IPs) to be used for API shutdown. Used with matching lists of $PVE_SHUTDOWN_NODES and $PVE_SHUTDOWN_TOKENS
+      - PVE_SHUTDOWN_NODES=${PVE_SHUTDOWN_NODES} # Ordered list of pve nodes. Used with matching lists of $PVE_SHUTDOWN_HOSTS and $PVE_SHUTDOWN_TOKENS
+      - PVE_SHUTDOWN_TOKENS=${PVE_SHUTDOWN_TOKENS} # Ordered list of pve API tokens with secrets in the form <username>@<node>!<api_token>=<api_secret>
     healthcheck:
       test: ["CMD-SHELL", "apcaccess | grep -E 'ONLINE' >> /dev/null"] # Command to check health
       interval: 30s # Interval between health checks
@@ -232,4 +214,35 @@ services:
 # volumes: # Use this section for volume bindings only
 #   config: # The name of the stack will be appended to the beginning of this volume name, if the volume doesn't already exist
 #     external: true # Use this directive if you created the docker volume in advance
+```
+This project can be used standalone, although there are also sister containers available for apcupsd-cgi and a near-zero configuration TIG (telegraf-InfluxDB-Grafana) stack available to monitor your UPS units.  A full write-up can be found here https://technologydragonslayer.com/2023/01/31/ultimate-apc-ups-monitoring-with-apcupsd-admin-plus-and-docker/:
+
+## apcupsd-cgi:
+
+![screenshot-raspberrypi10-2023 05 07-11_42_01](https://user-images.githubusercontent.com/41088895/236874426-04a9d101-bf9d-4595-ad55-2bdfce434b4c.png)
+
+## TIG stack:
+
+![screencapture-apcupsd-2023-04-29-14_56_00](https://user-images.githubusercontent.com/41088895/235324008-e1a9cb27-252a-402f-98c2-83243f5b6b4a.png)
+
+## Wake-on-LAN:
+
+This customized and updated version of WoLweb, is used for sending the Wake-on-LAN Magic Packets. It has a web interface, which is used to input the hostnames and MAC addresses of Ethernet connected systems you'd like to wake upon power restoration.  It can also be used for general purposes to wake systems via the web interface, or bookmarkable URLs:
+
+![screenshot-apcupsd-2023 05 01-15_16_43](https://user-images.githubusercontent.com/41088895/235796252-1891d96a-cc45-4b61-9789-028fb033a936.png)
+
+```yml
+version: '3.7'
+services:  
+  wolweb:
+    image: bnhf/wolweb:latest
+    container_name: wolweb  
+    environment:
+      - WOLWEBPORT=${WOLWEBPORT} # The port you'd like WoLweb to use (8089 recommended)
+      - WOLWEBVDIR=${WOLWEBVDIR} # The virtual directory for WoLweb to use (/wolweb recommended)
+      - WOLWEBBCASTIP=${WOLWEBBCASTIP} # The broadcast IP for your subnet including the port (192.168.0.255:9 or 192.168.1.255:9 are typical)
+    volumes:
+      - /data/wolweb:/wolweb/data # Bind a directory to /wolweb/data for data persistence
+    network_mode: host # host is the only network mode that supports WoL Magic Packets
+    restart: unless-stopped
 ```
