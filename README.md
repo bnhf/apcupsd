@@ -12,13 +12,13 @@ Equally, this container can be run on any other host (SLAVE) to monitor another 
 
 The purpose of this image is to containerize the APC UPS monitoring daemon so that it is separated from the OS, yet still has access to the UPS via USB Cable.  
 
-### Configuration:
+### *Configuration:*
 
 Minimal configuration is currently required for this image to work, though you may be required to tweak the USB device that is passed through to your container by docker.
 
 Portainer is the recommended tool here, and makes maintaining and updating this container substantially easier -- particularly if you have multiple APC UPS units, and multiple other systems you wish to be shutdown when power is lost.
 
-## @apcupsd-master-slave:*
+## *apcupsd-master-slave:*
 
 ### Here's the minimum docker-compose configuration required, if you want to do some quick testing. The full stack below is recommended though:
 
