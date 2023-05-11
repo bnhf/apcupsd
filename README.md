@@ -163,6 +163,35 @@ This project can be used standalone, although there are also sister containers a
 
 ![screenshot-raspberrypi10-2023 05 07-11_42_01](https://user-images.githubusercontent.com/41088895/236874426-04a9d101-bf9d-4595-ad55-2bdfce434b4c.png)
 
+The docker image is Debian 11 (Bullseye) based, with nginx-light as web server, fcgiwrap as cgi server and obviously apcupsd-cgi. 
+
+Apcupsd-cgi is configured to search and connect to the apcupsd daemon on the host machine IP via the standard port 3551. Nginx is configured to connect with fcgiwrap (CGI server) and to serve multimon.cgi directly on port 80. The container exposes port 80, but can be remapped as required -- I use port 3552.
+
+### *Portainer Stacks (container-based) installation of apcupd-cgi:*
+
+```yml
+version: '3.7'
+services:
+  apcupsd-cgi:
+    image: bnhf/apcupsd-cgi:latest
+    container_name: apcupsd-cgi
+    dns_search: localdomain # Set to your LAN's domain name (often local or localdomain), this should help with local DNS resolution of hostnames
+    ports:
+      - 3552:80
+    environment:
+      - UPSHOSTS=${UPSHOSTS} # Ordered list of hostnames or IP addresses of UPS connected computers (space separated, no quotes)
+      - UPSNAMES=${UPSNAMES} # Matching ordered list of location names to display on status page (space separated, no quotes)
+      - TZ=${TZ} # Timezone to use for status page -- UTC is the default
+    volumes:
+      - /data/apcupsd-cgi:/etc/apcupsd
+    restart: unless-stopped
+```
+*Environment variables required for the above (or hardcode values into compose):*
+
+    UPSHOSTS (List of hostnames or IP addresses for computers with connected APC UPSs. Space separated without quotes.)
+    UPSNAMES (List of names you'd like used in the WebUI. Order must match UPSHOSTS. Space separated without quotes.)
+    TZ (Timezone for apcupsd-cgi to use when displaying information about individual UPS units)
+
 ## TIG stack:
 
 ![screencapture-apcupsd-2023-04-29-14_56_00](https://user-images.githubusercontent.com/41088895/235324008-e1a9cb27-252a-402f-98c2-83243f5b6b4a.png)
