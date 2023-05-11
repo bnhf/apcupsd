@@ -68,7 +68,7 @@ services:
       - /data/apcupsd:/etc/apcupsd # /etc/apcupsd can be bound to a directory or a docker volume
 ```
 
-Options for connectivity other than USB, including for slaves that aren't directly connected to a UPS:
+Environment variables for connectivity other than USB, including for slaves that aren't directly connected to a UPS:
 
 ```yml
       - UPSCABLE=${UPSCABLE} # Usually doesn't need to be changed on system connected to UPS. (default=usb) On APCUPSD_SLAVES set the value to ether
@@ -76,7 +76,7 @@ Options for connectivity other than USB, including for slaves that aren't direct
       - DEVICE=${DEVICE} # Use this only on APCUPSD_SLAVES to set the hostname or IP address of the APCUPSD_MASTER with the listening port (:3551)
 ```
 
-Options for monitoring and shutdown of UPS connected device(s), and the shutdown of the UPS itself:
+Environment variables for monitoring and shutdown of UPS connected device(s), and the shutdown of the UPS itself:
 
 ```yml
       - POLLTIME=${POLLTIME} # Interval (in seconds) at which apcupsd polls the UPS for status (default=60)
@@ -87,7 +87,7 @@ Options for monitoring and shutdown of UPS connected device(s), and the shutdown
       - KILLDELAY=${KILLDELAY} # If non-zero, sets the daemon to attempt to turn the UPS off x seconds after sending a shutdown request (default=0)
 ```
 
-Option for conducting a UPS selftest at a timed interval:
+Environment variable for conducting a UPS selftest at a timed interval:
 
 ```yml
       - SELFTEST=${SELFTEST} # Sets the daemon to ask the UPS to perform a self test every x hours (default=336)
@@ -100,18 +100,18 @@ Use these two environment variables to list the slaves that will be connected to
       - APCUPSD_NAMES=${APCUPSD_NAMES} # Match the order of this list one-to-one to APCUPSD_HOSTS list, including this system (space separated)
 ```
 
-Option for setting your local timezone in lieu of UTC:
+Environment variable for setting your local timezone in lieu of UTC:
 ```yml
       - TZ=${TZ}
 ```
 
-Option to update apcupsd scripts and .conf even if a persistent host data directory is being bound to the container:
+Environment variable to update apcupsd scripts and .conf even if a persistent host data directory is being bound to the container:
 
 ```yml
       - UPDATE_SCRIPTS=${UPDATE_SCRIPTS} # Set to true if you'd like all the apcupsd scripts and .conf file to be overwritten with the latest versions
 ```
 
-Options to recieve notifications via Gmail SMTP Email or SMS related to power failure events or urgent UPS maintenance:
+Environment variables to recieve notifications via Gmail SMTP Email or SMS related to power failure events or urgent UPS maintenance:
 
 ```yml
       - SMTP_GMAIL=${SMTP_GMAIL} # Gmail account (with 2FA enabled) to use for SMTP
@@ -120,7 +120,7 @@ Options to recieve notifications via Gmail SMTP Email or SMS related to power fa
       - POWER_RESTORED_EMAIL=${POWER_RESTORED_EMAIL} # Set to true if you'd like an Email notification when power is restored after UPS shutdown
 ```
 
-Options related to waking sytems after being shutdown during a power failure event:
+Environment variables related to waking sytems after being shutdown during a power failure event:
 
 ```yml
       - WOLWEB_HOSTNAMES=${WOLWEB_HOSTNAMES} # Space seperated list of hostnames names to send WoL Magic Packet to on startup
