@@ -112,7 +112,7 @@ services:
       retries: 3 # How many times to retry
       start_period: 15s # Estimated time to boot
       
-    # The system_bus_socker binding is always required for host computer shutdowns. The data directory can be a basic binding as shown, or use a Docker Volume if preffered.
+    # The system_bus_socket binding is always required for host computer shutdowns. The data directory can be a basic binding as shown, or use a Docker Volume if preferred.
     volumes:
       - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # Required to support host shutdown from the container
       - /data/apcupsd:/etc/apcupsd # /etc/apcupsd can be bound to a directory or a docker volume
