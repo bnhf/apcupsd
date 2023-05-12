@@ -200,7 +200,7 @@ services:
 
 This customized and updated version of WoLweb, is used for sending the Wake-on-LAN Magic Packets. It has a web interface, which is used to input the hostnames and MAC addresses of Ethernet connected systems you'd like to wake upon power restoration.  It can also be used for general purposes to wake systems via the web interface, or bookmarkable URLs:
 
-![screenshot-apcupsd-2023 05 01-15_16_43](https://user-images.githubusercontent.com/41088895/235796252-1891d96a-cc45-4b61-9789-028fb033a936.png)
+![screenshot-raspberrypi4-2023 05 09-08_14_26](https://github.com/bnhf/apcupsd-master-slave/assets/41088895/8c4d7e5a-01d9-40a0-ac12-80da845ae85c)
 
 ```yml
 version: '3.7'
